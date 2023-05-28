@@ -1,10 +1,39 @@
 from flask import Flask, render_template, request, jsonify
-import requests
-import datetime
-import tensorflow as tf
+app = Flask(__name__)
 
-from clean_text import clean_texts
 
+############################################
+#                                          #
+#               Simple Flask               #
+#                                          #
+############################################
+
+@app.route("/", methods = ["GET"])
+def home():
+    return "Hello World!"
+
+
+@app.route("/echo", methods = ["GET", "POST"])
+def echo():
+    if request.method == 'GET':
+        if "echo" in request.args: return request.args.get("echo")
+    
+    if request.method == 'POST':
+        if "echo" in request.form: return request.form.get("echo")
+
+    return "Send something to echo"
+
+############################################
+#                                          #
+#             Simple Flask END             #
+#                                          #
+############################################
+
+############################################
+#                                          #
+#               REAL AI PART               #
+#                                          #
+############################################
 
 from pathlib import Path
 CWD = Path(__file__).parent.resolve()
@@ -14,38 +43,16 @@ model = tf.keras.models.load_model(CWD / "models/cyberbullying-bdlstm.h5")
 with open(CWD / "models/tokenizer.json") as file:
     tokenizer = tf.keras.preprocessing.text.tokenizer_from_json(file.read())
 
-app = Flask(__name__)
-
-convos = []
-
-@app.route("/")
-def home():
-    return render_template("chat.html")
-
-@app.route("/chat")
-def chat():
-    return render_template("chat.html")
-
 @app.route("/cyberbully")
 def cyberbully():
     messages = clean_texts([request.args.get("msg")], tokenizer)
     return jsonify(dict(score = model.predict(messages).T[0].tolist()[0]))
-    
-time = lambda: datetime.datetime.now().strftime("%H:%M")
 
-@app.route("/getUserHtml")
-def getUser():
-    userText = request.args.get('msg')
-    return {"user": f"<div class='container darker'><p class='user-msg'>{userText}</p><span class='time-right'>{time()}</span></div>"}
-
-@app.route("/get")
-def get():
-    userText = request.args.get('msg')
-    botText = requests.post("https://api-inference.huggingface.co/models/facebook/blenderbot-400M-distill", headers={"Authorization": "Bearer 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"}, json={"inputs": {"past_user_inputs": [i[0] for i in convos], "generated_responses": [i[1] for i in convos], "text": userText}, "parameters": {"repetition_penalty": 1.33}}).json()["generated_text"]
-    convos.append((userText, botText))
-    return {"bot": botText.strip()}
-    # return {"user": f"<div class='container darker'><span class='user-msg'>{userText}</span><br><span class='time-right'>{time()}</span></div>", "bot": f"<div class='container'><span>{botText}</span><br><span class='time-left'>{time()}</span></div>"}
-
+############################################
+#                                          #
+#             REAL AI PART END             #
+#                                          #
+############################################
 
 ############################################
 #                                          #
@@ -74,7 +81,7 @@ def is_valid_signature(x_hub_signature, data, private_key):
 def webhook():
     # Github request checker
     x_hub_signature = request.headers.get('X-Hub-Signature')
-    if not is_valid_signature(x_hub_signature, request.data, os.getenv("WEBHOOK_SECRET", "wrong")):
+    if not is_valid_signature(x_hub_signature, request.data, w_secret):
         return "YOU ARE NOT GITHUB!!"
 
     repo = git.Repo(CWD)
@@ -88,5 +95,5 @@ def webhook():
 #                                          #
 ############################################
 
-if __name__ == "__main__": 
-    app.run(debug=True)
+if __name__ == "__main__":
+    app.run(debug = True)
