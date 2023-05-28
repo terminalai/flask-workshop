@@ -3,8 +3,9 @@ import requests
 import datetime
 import tensorflow as tf
 
-from clean_text import clean_texts
+import git, os
 
+from clean_text import clean_texts
 
 from pathlib import Path
 CWD = Path(__file__).parent.resolve()
@@ -22,21 +23,10 @@ convos = []
 def home():
     return render_template("chat.html")
 
-@app.route("/chat")
-def chat():
-    return render_template("chat.html")
-
 @app.route("/cyberbully")
 def cyberbully():
     messages = clean_texts([request.args.get("msg")], tokenizer)
     return jsonify(dict(score = model.predict(messages).T[0].tolist()[0]))
-    
-time = lambda: datetime.datetime.now().strftime("%H:%M")
-
-@app.route("/getUserHtml")
-def getUser():
-    userText = request.args.get('msg')
-    return {"user": f"<div class='container darker'><p class='user-msg'>{userText}</p><span class='time-right'>{time()}</span></div>"}
 
 @app.route("/get")
 def get():
