@@ -26,11 +26,11 @@ body {
 }
 
 #header {
-background-color: darkslategrey;
-color: #ffffff;
-padding: 20px;
-font-size: 1em;
-font-weight: bold;
+    background-color: darkslategrey;
+    color: #ffffff;
+    padding: 20px;
+    font-size: 1em;
+    font-weight: bold;
 }
 
 message-container {
