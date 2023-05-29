@@ -64,7 +64,7 @@ def is_valid_signature(x_hub_signature, data, private_key):
 def webhook():
     # Github request checker
     x_hub_signature = request.headers.get('X-Hub-Signature')
-    if not is_valid_signature(x_hub_signature, request.data, os.getenv("WEBHOOK_SECRET", "wrong")):
+    if not is_valid_signature(x_hub_signature, request.data, "secret"):
         return "YOU ARE NOT GITHUB!!"
 
     repo = git.Repo(CWD)
