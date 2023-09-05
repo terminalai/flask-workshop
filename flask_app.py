@@ -34,14 +34,6 @@ if np.round(prediction[0][0]) == 1:
 else:
     print("The review is negative.")
 
-
-CWD = Path(__file__).parent.resolve()
-
-model = tf.keras.models.load_model(CWD / "models/cyberbullying-bdlstm.h5")
-
-with open(CWD / "models/tokenizer.json") as file:
-    tokenizer = tf.keras.preprocessing.text.tokenizer_from_json(file.read())
-
 app = Flask(__name__)
 
 convos = []
@@ -59,7 +51,8 @@ def cyberbully():
 def get():
     userText = request.args.get('msg')
     # Prepare new review for prediction
-    new_review = ["This movie is fantastic!"]
+    new_review = [userText]
+    print(new_review)
     new_sequences = tokenizer.texts_to_sequences(new_review)
     new_padded_sequences = pad_sequences(new_sequences, maxlen=120, padding="post", truncating="post")
 
