@@ -39,6 +39,7 @@ from pathlib import Path
 import tensorflow as tf
 from tensorflow import keras
 import pickle
+
 CWD = Path(__file__).parent.resolve()
 
 model = tf.keras.models.load_model(CWD / "models/text_classification_model.h5")
@@ -57,8 +58,7 @@ def cyberbully():
     # Make prediction
     prediction = model.predict(new_padded_sequences)
 
-    print(dict(score = prediction[0][0]))
-    return jsonify(dict(score = prediction[0][0]))
+    return jsonify(dict(score = float(prediction[0][0])))
 
 ############################################
 #                                          #
