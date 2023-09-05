@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Movie App</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="{{ url_for('static', filename='review.js') }}" defer></script>
+</head>
+
+<body>
+    <div id="movie">
+        <img style="width: 200px;" src="https://m.media-amazon.com/images/M/MV5BYTUxYjczMWUtYzlkZC00NTcwLWE3ODQtN2I2YTIxOTU0ZTljXkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_FMjpg_UX1000_.jpg" />
+        <div style="margin: 20px; width: 100%;">
+        <h1 style="color: #fff;">The Little Mermaid (2023)</h1>
+        <p style="font-size: 20px; color: #ddd; text-align: justify;">The youngest of King Triton's daughters, Ariel is a beautiful and spirited young mermaid with a thirst for adventure. Longing to find out more about the world beyond the sea, Ariel visits the surface and falls for the dashing Prince Eric. Following her heart, she makes a deal with the evil sea witch, Ursula, to experience life on land.</p>
+        </div>
+    </div>
+    
+    <div id="reviews_div">
+    </div>
+
+    <form id="form" method="POST">
+        <textarea id="review-text" placeholder="Type your Review HERE!" class="review" name="review"></textarea>
+        <input type="submit" id="submit" class='button form-btn' value="Submit Review"></input>
+    </form>
+    
+</body>
+
+</html>
