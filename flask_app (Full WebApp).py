@@ -33,7 +33,6 @@ def home():
 
 @app.route("/reviews")
 def review_list():
-    print(reviews)
     return jsonify(reviews)
     
 
