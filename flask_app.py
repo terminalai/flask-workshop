@@ -8,6 +8,33 @@ import git, os
 from clean_text import clean_texts
 
 from pathlib import Path
+import pickle
+import numpy as np
+from tensorflow.keras.models import load_model
+from tensorflow.keras.preprocessing.sequence import pad_sequences
+
+# Load the saved model
+model = load_model("text_classification_model.h5")
+
+# Load the tokenizer
+with open('tokenizer.pkl', 'rb') as handle:
+    tokenizer = pickle.load(handle)
+
+# Prepare new review for prediction
+new_review = ["This movie is fantastic!"]
+new_sequences = tokenizer.texts_to_sequences(new_review)
+new_padded_sequences = pad_sequences(new_sequences, maxlen=120, padding="post", truncating="post")
+
+# Make prediction
+prediction = model.predict(new_padded_sequences)
+
+# Interpret prediction
+if np.round(prediction[0][0]) == 1:
+    print("The review is positive.")
+else:
+    print("The review is negative.")
+
+
 CWD = Path(__file__).parent.resolve()
 
 model = tf.keras.models.load_model(CWD / "models/cyberbullying-bdlstm.h5")
@@ -31,9 +58,19 @@ def cyberbully():
 @app.route("/get")
 def get():
     userText = request.args.get('msg')
-    botText = requests.post("https://api-inference.huggingface.co/models/facebook/blenderbot-400M-distill", headers={"Authorization": "Bearer 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"}, json={"inputs": {"past_user_inputs": [i[0] for i in convos], "generated_responses": [i[1] for i in convos], "text": userText}, "parameters": {"repetition_penalty": 1.33}}).json()["generated_text"]
-    convos.append((userText, botText))
-    return {"bot": botText.strip()}
+    # Prepare new review for prediction
+    new_review = ["This movie is fantastic!"]
+    new_sequences = tokenizer.texts_to_sequences(new_review)
+    new_padded_sequences = pad_sequences(new_sequences, maxlen=120, padding="post", truncating="post")
+
+    # Make prediction
+    prediction = model.predict(new_padded_sequences)
+
+    # Interpret prediction
+    if np.round(prediction[0][0]) == 1:
+        return "The review is positive."
+    else:
+        return "The review is negative."
     # return {"user": f"<div class='container darker'><span class='user-msg'>{userText}</span><br><span class='time-right'>{time()}</span></div>", "bot": f"<div class='container'><span>{botText}</span><br><span class='time-left'>{time()}</span></div>"}
 
 
